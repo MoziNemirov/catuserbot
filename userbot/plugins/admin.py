@@ -30,12 +30,12 @@ from ..sql_helper.mute_sql import is_muted, mute, unmute
 from . import BOTLOG, BOTLOG_CHATID
 
 # =================== STRINGS ============
-PP_TOO_SMOL = "`The image is too small`"
-PP_ERROR = "`Failure while processing the image`"
-NO_ADMIN = "`I am not an admin nub nibba!`"
-NO_PERM = "`I don't have sufficient permissions! This is so sed. Alexa play despacito`"
-CHAT_PP_CHANGED = "`Chat Picture Changed`"
-INVALID_MEDIA = "`Invalid Extension`"
+PP_TOO_SMOL = "`Изображение слишком маленькое`"
+PP_ERROR = "`Сбой при обработке изображения`"
+NO_ADMIN = "`Я не админ нуб нибба!`"
+NO_PERM = "`У меня недостаточно прав! Это так грустно.`"
+CHAT_PP_CHANGED = "`Изображение чата изменено`"
+INVALID_MEDIA = "`Недопустимое расширение`"
 
 BANNED_RIGHTS = ChatBannedRights(
     until_date=None,
@@ -72,13 +72,13 @@ plugin_category = "admin"
     pattern="gpic( -s| -d)$",
     command=("gpic", plugin_category),
     info={
-        "header": "For changing group display pic or deleting display pic",
-        "description": "Reply to Image for changing display picture",
-        "flags": {
-            "-s": "To set group pic",
-            "-d": "To delete group pic",
+        "заголовок": "Для изменения группового отображаемого изображения или удаления отображаемого изображения",
+        "описание": "Ответ на изображение для изменения отображаемой картинки",
+        "флаги": {
+            "-s": "Чтобы установить групповое изображение",
+            "-d": "Чтобы удалить групповое изображение",
         },
-        "usage": [
+        "Применение": [
             "{tr}gpic -s <reply to image>",
             "{tr}gpic -d",
         ],
@@ -87,7 +87,7 @@ plugin_category = "admin"
     require_admin=True,
 )
 async def set_group_photo(event):  # sourcery no-metrics
-    "For changing Group dp"
+    "Для изменения группы dp"
     flag = (event.pattern_match.group(1)).strip()
     if flag == "-s":
         replymsg = await event.get_reply_message()
@@ -112,21 +112,21 @@ async def set_group_photo(event):  # sourcery no-metrics
             except ImageProcessFailedError:
                 return await edit_delete(event, PP_ERROR)
             except Exception as e:
-                return await edit_delete(event, f"**Error : **`{str(e)}`")
+                return await edit_delete(event, f"**Ошибка : **`{str(e)}`")
             process = "updated"
     else:
         try:
             await event.client(EditPhotoRequest(event.chat_id, InputChatPhotoEmpty()))
         except Exception as e:
-            return await edit_delete(event, f"**Error : **`{e}`")
+            return await edit_delete(event, f"**Ошибка : **`{e}`")
         process = "deleted"
-        await edit_delete(event, "```successfully group profile pic deleted.```")
+        await edit_delete(event, "```успешно удалена фотография профиля группы.```")
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
             "#GROUPPIC\n"
-            f"Group profile pic {process} successfully "
-            f"CHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+            f"Фотография профиля группы {process} успешно"
+            f"ЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
         )
 
 
@@ -134,10 +134,10 @@ async def set_group_photo(event):  # sourcery no-metrics
     pattern="promote(?:\s|$)([\s\S]*)",
     command=("promote", plugin_category),
     info={
-        "header": "To give admin rights for a person",
-        "description": "Provides admin rights to the person in the chat\
-            \nNote : You need proper rights for this",
-        "usage": [
+        "заголовок": "Дать права администратора человеку",
+        "описание": "Предоставляет права администратора человеку в чате\
+            \nПримечание. Для этого вам нужны соответствующие права.",
+        "Применение": [
             "{tr}promote <userid/username/reply>",
             "{tr}promote <userid/username/reply> <custom title>",
         ],
@@ -146,7 +146,7 @@ async def set_group_photo(event):  # sourcery no-metrics
     require_admin=True,
 )
 async def promote(event):
-    "To promote a person in chat"
+    "Продвигать человека в чате"
     new_rights = ChatAdminRights(
         add_admins=False,
         invite_users=True,
@@ -160,18 +160,18 @@ async def promote(event):
         rank = "Admin"
     if not user:
         return
-    catevent = await edit_or_reply(event, "`Promoting...`")
+    catevent = await edit_or_reply(event, "`продвижение...`")
     try:
         await event.client(EditAdminRequest(event.chat_id, user.id, new_rights, rank))
     except BadRequestError:
         return await catevent.edit(NO_PERM)
-    await catevent.edit("`Promoted Successfully! Now gib Party`")
+    await catevent.edit("`Успешно продвигается! Теперь устройте вечеринку`")
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
             f"#PROMOTE\
-            \nUSER: [{user.first_name}](tg://user?id={user.id})\
-            \nCHAT: {get_display_name(await event.get_chat())} (`{event.chat_id}`)",
+            \nПОЛЬЗОВАТЕЛЬ: [{user.first_name}](tg://user?id={user.id})\
+            \nЧАТ: {get_display_name(await event.get_chat())} (`{event.chat_id}`)",
         )
 
 
@@ -179,10 +179,10 @@ async def promote(event):
     pattern="demote(?:\s|$)([\s\S]*)",
     command=("demote", plugin_category),
     info={
-        "header": "To remove a person from admin list",
-        "description": "Removes all admin rights for that peron in that chat\
-            \nNote : You need proper rights for this and also u must be owner or admin who promoted that guy",
-        "usage": [
+        "заголовок": "Чтобы удалить человека из списка администраторов",
+        "описание": "Удаляет все права администратора для этого человека в этом чате\
+            \nПримечание: для этого вам нужны соответствующие права, а также вы должны быть владельцем или администратором, который продвигал этого парня",
+        "Применение": [
             "{tr}demote <userid/username/reply>",
             "{tr}demote <userid/username/reply> <custom title>",
         ],
@@ -191,11 +191,11 @@ async def promote(event):
     require_admin=True,
 )
 async def demote(event):
-    "To demote a person in group"
+    "Чтобы понизить человека в группе"
     user, _ = await get_user_from_event(event)
     if not user:
         return
-    catevent = await edit_or_reply(event, "`Demoting...`")
+    catevent = await edit_or_reply(event, "`Понижение...`")
     newrights = ChatAdminRights(
         add_admins=None,
         invite_users=None,
@@ -209,13 +209,13 @@ async def demote(event):
         await event.client(EditAdminRequest(event.chat_id, user.id, newrights, rank))
     except BadRequestError:
         return await catevent.edit(NO_PERM)
-    await catevent.edit("`Demoted Successfully! Betterluck next time`")
+    await catevent.edit("`Успешно понижен в должности! Повезет в следующий раз`")
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
             f"#DEMOTE\
-            \nUSER: [{user.first_name}](tg://user?id={user.id})\
-            \nCHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+            \nПОЛЬЗОВАТЕЛЬ: [{user.first_name}](tg://user?id={user.id})\
+            \nЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
         )
 
 
@@ -223,10 +223,10 @@ async def demote(event):
     pattern="ban(?:\s|$)([\s\S]*)",
     command=("ban", plugin_category),
     info={
-        "header": "Will ban the guy in the group where you used this command.",
-        "description": "Permanently will remove him from this group and he can't join back\
-            \nNote : You need proper rights for this.",
-        "usage": [
+        "заголовок": "Забанит парня в группе, где вы использовали эту команду.",
+        "описание": "Он навсегда удалит его из этой группы, и он не сможет вернуться обратно\
+            \nПримечание. Для этого вам нужны соответствующие права.",
+        "Применение": [
             "{tr}ban <userid/username/reply>",
             "{tr}ban <userid/username/reply> <reason>",
         ],
@@ -235,13 +235,13 @@ async def demote(event):
     require_admin=True,
 )
 async def _ban_person(event):
-    "To ban a person in group"
+    "Забанить человека в группе"
     user, reason = await get_user_from_event(event)
     if not user:
         return
     if user.id == event.client.uid:
-        return await edit_delete(event, "__You cant ban yourself.__")
-    catevent = await edit_or_reply(event, "`Whacking the pest!`")
+        return await edit_delete(event, "__Вы не можете запретить себе.__")
+    catevent = await edit_or_reply(event, "`Избиение вредителя!`")
     try:
         await event.client(EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS))
     except BadRequestError:
@@ -249,27 +249,27 @@ async def _ban_person(event):
     reply = await event.get_reply_message()
     if reason:
         await catevent.edit(
-            f"{_format.mentionuser(user.first_name ,user.id)}` is banned !!`\n**Reason : **`{reason}`"
+            f"{_format.mentionuser(user.first_name ,user.id)}` забанен !!`\n**Причина : **`{reason}`"
         )
     else:
         await catevent.edit(
-            f"{_format.mentionuser(user.first_name ,user.id)} `is banned !!`"
+            f"{_format.mentionuser(user.first_name ,user.id)} ` забанен !!`"
         )
     if BOTLOG:
         if reason:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 f"#BAN\
-                \nUSER: [{user.first_name}](tg://user?id={user.id})\
-                \nCHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)\
-                \nREASON : {reason}",
+                \nПОЛЬЗОВАТЕЛЬ: [{user.first_name}](tg://user?id={user.id})\
+                \nЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)\
+                \nПРИЧИНА : {reason}",
             )
         else:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 f"#BAN\
-                \nUSER: [{user.first_name}](tg://user?id={user.id})\
-                \nCHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+                \nПОЛЬЗОВАТЕЛЬ: [{user.first_name}](tg://user?id={user.id})\
+                \nЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
             )
         try:
             if reply:
@@ -277,7 +277,7 @@ async def _ban_person(event):
                 await reply.delete()
         except BadRequestError:
             return await catevent.edit(
-                "`I dont have message nuking rights! But still he is banned!`"
+                "`У меня нет прав на уничтожение сообщений! Но все равно он запрещен!`"
             )
 
 
@@ -285,10 +285,10 @@ async def _ban_person(event):
     pattern="unban(?:\s|$)([\s\S]*)",
     command=("unban", plugin_category),
     info={
-        "header": "Will unban the guy in the group where you used this command.",
-        "description": "Removes the user account from the banned list of the group\
-            \nNote : You need proper rights for this.",
-        "usage": [
+        "заголовок": "Разбанит парня в группе, где вы использовали эту команду.",
+        "описание": "Удаляет учетную запись пользователя из запрещенного списка группы\
+            \nПримечание. Для этого вам нужны соответствующие права.",
+        "Применение": [
             "{tr}unban <userid/username/reply>",
             "{tr}unban <userid/username/reply> <reason>",
         ],
@@ -297,27 +297,27 @@ async def _ban_person(event):
     require_admin=True,
 )
 async def nothanos(event):
-    "To unban a person"
+    "Разблокировать человека"
     user, _ = await get_user_from_event(event)
     if not user:
         return
-    catevent = await edit_or_reply(event, "`Unbanning...`")
+    catevent = await edit_or_reply(event, "`Разбан...`")
     try:
         await event.client(EditBannedRequest(event.chat_id, user.id, UNBAN_RIGHTS))
         await catevent.edit(
-            f"{_format.mentionuser(user.first_name ,user.id)} `is Unbanned Successfully. Granting another chance.`"
+            f"{_format.mentionuser(user.first_name ,user.id)} `успешно разбанен. Предоставление еще одного шанса.`"
         )
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 "#UNBAN\n"
-                f"USER: [{user.first_name}](tg://user?id={user.id})\n"
-                f"CHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+                f"ПОЛЬЗОВАТЕЛЬ: [{user.first_name}](tg://user?id={user.id})\n"
+                f"Чат: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
             )
     except UserIdInvalidError:
-        await catevent.edit("`Uh oh my unban logic broke!`")
+        await catevent.edit("`О, моя логика разбана сломалась!`")
     except Exception as e:
-        await catevent.edit(f"**Error :**\n`{e}`")
+        await catevent.edit(f"**Ошибка :**\n`{e}`")
 
 
 @catub.cat_cmd(incoming=True)
@@ -333,11 +333,11 @@ async def watcher(event):
     pattern="mute(?:\s|$)([\s\S]*)",
     command=("mute", plugin_category),
     info={
-        "header": "To stop sending messages from that user",
-        "description": "If is is not admin then changes his permission in group,\
-            if he is admin or if you try in personal chat then his messages will be deleted\
-            \nNote : You need proper rights for this.",
-        "usage": [
+        "заголовок": "Чтобы остановить отправку сообщений от этого пользователя",
+        "описание": "Если он не админ, то меняет его права в группе,\
+            если он админ или если попробовать в личном чате то его сообщения будут удаляться\
+            \nПримечание. Для этого вам нужны соответствующие права.",
+        "Применение": [
             "{tr}mute <userid/username/reply>",
             "{tr}mute <userid/username/reply> <reason>",
         ],
@@ -346,26 +346,26 @@ async def watcher(event):
 async def startmute(
     event,
 ):  # sourcery no-metri  # sourcery skip: low-code-quality, low-code-qualitycs
-    "To mute a person in that paticular chat"
+    "Чтобы отключить человека в этом конкретном чате"
     if event.is_private:
         replied_user = await event.client.get_entity(event.chat_id)
         if is_muted(event.chat_id, event.chat_id):
             return await event.edit(
-                "`This user is already muted in this chat ~~lmfao sed rip~~`"
+                "`Этот пользователь уже заглушен в этом чате  ~~lmfao sed rip~~`"
             )
         if event.chat_id == catub.uid:
-            return await edit_delete(event, "`You cant mute yourself`")
+            return await edit_delete(event, "`Вы не можете заглушить себя`")
         try:
             mute(event.chat_id, event.chat_id)
         except Exception as e:
-            await event.edit(f"**Error **\n`{e}`")
+            await event.edit(f"**Ошибка **\n`{e}`")
         else:
-            await event.edit("`Successfully muted that person.\n**｀-´)⊃━☆ﾟ.*･｡ﾟ **`")
+            await event.edit("`Вы успешно заглушили этого человека.\n**｀-´)⊃━☆ﾟ.*･｡ﾟ **`")
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 "#PM_MUTE\n"
-                f"**User :** [{replied_user.first_name}](tg://user?id={event.chat_id})\n",
+                f"**Пользователь :** [{replied_user.first_name}](tg://user?id={event.chat_id})\n",
             )
     else:
         chat = await event.get_chat()
@@ -373,28 +373,28 @@ async def startmute(
         creator = chat.creator
         if not admin and not creator:
             return await edit_or_reply(
-                event, "`You can't mute a person without admin rights niqq.` ಥ﹏ಥ  "
+                event, "`Вы не можете заглушить человека без прав администратора niqq.` ಥ﹏ಥ  "
             )
         user, reason = await get_user_from_event(event)
         if not user:
             return
         if user.id == catub.uid:
-            return await edit_or_reply(event, "`Sorry, I can't mute myself`")
+            return await edit_or_reply(event, "`Извините, я не могу отключить`")
         if is_muted(user.id, event.chat_id):
             return await edit_or_reply(
-                event, "`This user is already muted in this chat ~~lmfao sed rip~~`"
+                event, "`Этот пользователь уже заглушен в этом чате ~~lmfao sed rip~~`"
             )
         result = await event.client.get_permissions(event.chat_id, user.id)
         try:
             if result.participant.banned_rights.send_messages:
                 return await edit_or_reply(
                     event,
-                    "`This user is already muted in this chat ~~lmfao sed rip~~`",
+                    "`Этот пользователь уже заглушен в этом чате ~~lmfao sed rip~~`",
                 )
         except AttributeError:
             pass
         except Exception as e:
-            return await edit_or_reply(event, f"**Error : **`{e}`")
+            return await edit_or_reply(event, f"**Ошибка : **`{e}`")
         try:
             await event.client(EditBannedRequest(event.chat_id, user.id, MUTE_RIGHTS))
         except UserAdminInvalidError:
@@ -402,32 +402,32 @@ async def startmute(
                 if chat.admin_rights.delete_messages is not True:
                     return await edit_or_reply(
                         event,
-                        "`You can't mute a person if you dont have delete messages permission. ಥ﹏ಥ`",
+                        "`Вы не можете заглушить человека, если у вас нет разрешения на удаление сообщений. ಥ﹏ಥ`",
                     )
             elif "creator" not in vars(chat):
                 return await edit_or_reply(
-                    event, "`You can't mute a person without admin rights niqq.` ಥ﹏ಥ  "
+                    event, "`Вы не можете заглушить человека без прав администратора niqq.` ಥ﹏ಥ  "
                 )
             mute(user.id, event.chat_id)
         except Exception as e:
-            return await edit_or_reply(event, f"**Error : **`{e}`")
+            return await edit_or_reply(event, f"**Ошибка : **`{e}`")
         if reason:
             await edit_or_reply(
                 event,
-                f"{_format.mentionuser(user.first_name ,user.id)} `is muted in {get_display_name(await event.get_chat())}`\n"
-                f"`Reason:`{reason}",
+                f"{_format.mentionuser(user.first_name ,user.id)} `отключен в {get_display_name(await event.get_chat())}`\n"
+                f"`Причина:`{reason}",
             )
         else:
             await edit_or_reply(
                 event,
-                f"{_format.mentionuser(user.first_name ,user.id)} `is muted in {get_display_name(await event.get_chat())}`\n",
+                f"{_format.mentionuser(user.first_name ,user.id)} `отключен в {get_display_name(await event.get_chat())}`\n",
             )
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 "#MUTE\n"
-                f"**User :** [{user.first_name}](tg://user?id={user.id})\n"
-                f"**Chat :** {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+                f"**Пользователь :** [{user.first_name}](tg://user?id={user.id})\n"
+                f"**Чат :** {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
             )
 
 
@@ -435,36 +435,36 @@ async def startmute(
     pattern="unmute(?:\s|$)([\s\S]*)",
     command=("unmute", plugin_category),
     info={
-        "header": "To allow user to send messages again",
-        "description": "Will change user permissions ingroup to send messages again.\
-        \nNote : You need proper rights for this.",
-        "usage": [
+        "заголовок": "Разрешить пользователю снова отправлять сообщения",
+        "описание": "Изменит права пользователя в группе, чтобы снова отправлять сообщения.\
+        \nПримечание. Для этого вам нужны соответствующие права.",
+        "Применение": [
             "{tr}unmute <userid/username/reply>",
             "{tr}unmute <userid/username/reply> <reason>",
         ],
     },
 )
 async def endmute(event):
-    "To mute a person in that paticular chat"
+    "Чтобы отключить человека в этом конкретном чате"
     if event.is_private:
         replied_user = await event.client.get_entity(event.chat_id)
         if not is_muted(event.chat_id, event.chat_id):
             return await event.edit(
-                "`__This user is not muted in this chat__\n（ ^_^）o自自o（^_^ ）`"
+                "`__Этот пользователь не отключен в этом чате__\n（ ^_^）o自自o（^_^ ）`"
             )
         try:
             unmute(event.chat_id, event.chat_id)
         except Exception as e:
-            await event.edit(f"**Error **\n`{e}`")
+            await event.edit(f"**Ошибка **\n`{e}`")
         else:
             await event.edit(
-                "`Successfully unmuted that person\n乁( ◔ ౪◔)「    ┑(￣Д ￣)┍`"
+                "`Вы успешно включили звук этого человека\n乁( ◔ ౪◔)「    ┑(￣Д ￣)┍`"
             )
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 "#PM_UNMUTE\n"
-                f"**User :** [{replied_user.first_name}](tg://user?id={event.chat_id})\n",
+                f"**Пользователь:** [{replied_user.first_name}](tg://user?id={event.chat_id})\n",
             )
     else:
         user, _ = await get_user_from_event(event)
@@ -482,20 +482,20 @@ async def endmute(event):
         except AttributeError:
             return await edit_or_reply(
                 event,
-                "`This user can already speak freely in this chat ~~lmfao sed rip~~`",
+                "`Этот пользователь уже может свободно говорить в этом чате ~~lmfao sed rip~~`",
             )
         except Exception as e:
-            return await edit_or_reply(event, f"**Error : **`{e}`")
+            return await edit_or_reply(event, f"**Ошибка : **`{e}`")
         await edit_or_reply(
             event,
-            f"{_format.mentionuser(user.first_name ,user.id)} `is unmuted in {get_display_name(await event.get_chat())}\n乁( ◔ ౪◔)「    ┑(￣Д ￣)┍`",
+            f"{_format.mentionuser(user.first_name ,user.id)} `розмучен в {get_display_name(await event.get_chat())}\n乁( ◔ ౪◔)「    ┑(￣Д ￣)┍`",
         )
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
                 "#UNMUTE\n"
-                f"**User :** [{user.first_name}](tg://user?id={user.id})\n"
-                f"**Chat :** {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+                f"**Пользователь:** [{user.first_name}](tg://user?id={user.id})\n"
+                f"**Чат :** {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
             )
 
 
@@ -503,10 +503,10 @@ async def endmute(event):
     pattern="kick(?:\s|$)([\s\S]*)",
     command=("kick", plugin_category),
     info={
-        "header": "To kick a person from the group",
-        "description": "Will kick the user from the group so he can join back.\
-        \nNote : You need proper rights for this.",
-        "usage": [
+        "заголовок": "Выкинуть человека из группы",
+        "описание": "Выкинет пользователя из группы, чтобы он мог вернуться.\
+        \nПримечание. Для этого вам нужны соответствующие права.",
+        "Применение": [
             "{tr}kick <userid/username/reply>",
             "{tr}kick <userid/username/reply> <reason>",
         ],
@@ -515,18 +515,18 @@ async def endmute(event):
     require_admin=True,
 )
 async def kick(event):
-    "use this to kick a user from chat"
+    "используйте это, чтобы исключить пользователя из чата"
     user, reason = await get_user_from_event(event)
     if not user:
         return
-    catevent = await edit_or_reply(event, "`Kicking...`")
+    catevent = await edit_or_reply(event, "`Кик...`")
     try:
         await event.client.kick_participant(event.chat_id, user.id)
     except Exception as e:
         return await catevent.edit(f"{NO_PERM}\n{e}")
     if reason:
         await catevent.edit(
-            f"`Kicked` [{user.first_name}](tg://user?id={user.id})`!`\nReason: {reason}"
+            f"`Выгнал` [{user.first_name}](tg://user?id={user.id})`!`\nПричина: {reason}"
         )
     else:
         await catevent.edit(f"`Kicked` [{user.first_name}](tg://user?id={user.id})`!`")
@@ -534,8 +534,8 @@ async def kick(event):
         await event.client.send_message(
             BOTLOG_CHATID,
             "#KICK\n"
-            f"USER: [{user.first_name}](tg://user?id={user.id})\n"
-            f"CHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)\n",
+            f"ПОЛЬЗОВАТЕЛЬ: [{user.first_name}](tg://user?id={user.id})\n"
+            f"ЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)\n",
         )
 
 
@@ -543,21 +543,21 @@ async def kick(event):
     pattern="pin( loud|$)",
     command=("pin", plugin_category),
     info={
-        "header": "For pining messages in chat",
-        "description": "reply to a message to pin it in that in chat\
-        \nNote : You need proper rights for this if you want to use in group.",
-        "options": {"loud": "To notify everyone without this.it will pin silently"},
-        "usage": [
+        "заголовок": "Для закрепления сообщений в чате",
+        "описание": "ответьте на сообщение, чтобы закрепить его в чате\
+        \nПримечание. Для этого вам потребуются соответствующие права, если вы хотите использовать его в группе.",
+        "опции": {"Для всех": "Чтобы уведомить всех без this.it будет закреплен молча"},
+        "Применение": [
             "{tr}pin <reply>",
             "{tr}pin loud <reply>",
         ],
     },
 )
 async def pin(event):
-    "To pin a message in chat"
+    "Чтобы закрепить сообщение в чате"
     to_pin = event.reply_to_msg_id
     if not to_pin:
-        return await edit_delete(event, "`Reply to a message to pin it.`", 5)
+        return await edit_delete(event, "`Ответьте на сообщение, чтобы закрепить его.`", 5)
     options = event.pattern_match.group(1)
     is_silent = bool(options)
     try:
@@ -566,7 +566,7 @@ async def pin(event):
         return await edit_delete(event, NO_PERM, 5)
     except Exception as e:
         return await edit_delete(event, f"`{e}`", 5)
-    await edit_delete(event, "`Pinned Successfully!`", 3)
+    await edit_delete(event, "`Закреплено успешно!`", 3)
     sudo_users = _sudousers_list()
     if event.sender_id in sudo_users:
         with contextlib.suppress(BadRequestError):
@@ -575,9 +575,9 @@ async def pin(event):
         await event.client.send_message(
             BOTLOG_CHATID,
             f"#PIN\
-                \n__successfully pinned a message in chat__\
-                \nCHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)\
-                \nLOUD: {is_silent}",
+                \n__успешно закрепил сообщение в чате__\
+                \nЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)\
+                \nДля всех: {is_silent}",
         )
 
 
@@ -585,24 +585,24 @@ async def pin(event):
     pattern="unpin( all|$)",
     command=("unpin", plugin_category),
     info={
-        "header": "For unpining messages in chat",
-        "description": "reply to a message to unpin it in that in chat\
-        \nNote : You need proper rights for this if you want to use in group.",
-        "options": {"all": "To unpin all messages in the chat"},
-        "usage": [
+        "заголовок": "Для открепления сообщений в чате",
+        "описание": "ответьте на сообщение, чтобы открепить его в чате\
+        \nПримечание. Для этого вам потребуются соответствующие права, если вы хотите использовать его в группе.",
+        "опции": {"все": "Чтобы открепить все сообщения в чате"},
+        "Применение": [
             "{tr}unpin <reply>",
             "{tr}unpin all",
         ],
     },
 )
 async def unpin(event):
-    "To unpin message(s) in the group"
+    "Чтобы открепить сообщения в группе"
     to_unpin = event.reply_to_msg_id
     options = (event.pattern_match.group(1)).strip()
     if not to_unpin and options != "all":
         return await edit_delete(
             event,
-            "__Reply to a message to unpin it or use __`.unpin all`__ to unpin all__",
+            "__Ответьте на сообщение, чтобы открепить его или использовать __`.unpin all`__ to unpin all__",
             5,
         )
     try:
@@ -612,13 +612,13 @@ async def unpin(event):
             await event.client.unpin_message(event.chat_id)
         else:
             return await edit_delete(
-                event, "`Reply to a message to unpin it or use .unpin all`", 5
+                event, "`Ответьте на сообщение, чтобы открепить его или использовать .unpin all`", 5
             )
     except BadRequestError:
         return await edit_delete(event, NO_PERM, 5)
     except Exception as e:
         return await edit_delete(event, f"`{e}`", 5)
-    await edit_delete(event, "`Unpinned Successfully!`", 3)
+    await edit_delete(event, "`Откреплено успешно!`", 3)
     sudo_users = _sudousers_list()
     if event.sender_id in sudo_users:
         with contextlib.suppress(BadRequestError):
@@ -627,8 +627,8 @@ async def unpin(event):
         await event.client.send_message(
             BOTLOG_CHATID,
             f"#UNPIN\
-                \n__successfully unpinned message(s) in chat__\
-                \nCHAT: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
+                \n__успешно открепил(а) сообщение(я) в чате__\
+                \nЧАТ: {get_display_name(await event.get_chat())}(`{event.chat_id}`)",
         )
 
 
@@ -636,26 +636,26 @@ async def unpin(event):
     pattern="undlt( -u)?(?: |$)(\d*)?",
     command=("undlt", plugin_category),
     info={
-        "header": "To get recent deleted messages in group",
-        "description": "To check recent deleted messages in group, by default will show 5. you can get 1 to 15 messages.",
-        "flags": {
-            "u": "use this flag to upload media to chat else will just show as media."
+        "заголовок": "Чтобы получить последние удаленные сообщения в группе",
+        "описание": "Чтобы проверить последние удаленные сообщения в группе, по умолчанию отображается 5. Вы можете получить от 1 до 15 сообщений.",
+        "флаги": {
+            "u": "используйте этот флаг, чтобы загрузить медиа в чат, иначе оно будет отображаться как медиа."
         },
-        "usage": [
+        "Применение": [
             "{tr}undlt <count>",
             "{tr}undlt -u <count>",
         ],
-        "examples": [
+        "Примеры": [
             "{tr}undlt 7",
-            "{tr}undlt -u 7 (this will reply all 7 messages to this message",
+            "{tr}undlt -u 7 (это ответит на все 7 сообщений на это сообщение",
         ],
     },
     groups_only=True,
     require_admin=True,
 )
 async def _iundlt(event):  # sourcery no-metrics
-    "To check recent deleted messages in group"
-    catevent = await edit_or_reply(event, "`Searching recent actions .....`")
+    "Чтобы проверить последние удаленные сообщения в группе"
+    catevent = await edit_or_reply(event, "`Поиск последних действий .....`")
     flag = event.pattern_match.group(1)
     if event.pattern_match.group(2) != "":
         lim = int(event.pattern_match.group(2))
@@ -667,15 +667,15 @@ async def _iundlt(event):  # sourcery no-metrics
     adminlog = await event.client.get_admin_log(
         event.chat_id, limit=lim, edit=False, delete=True
     )
-    deleted_msg = f"**Recent {lim} Deleted message(s) in this group are :**"
+    deleted_msg = f"**Недавний {lim} Удаленные сообщения в этой группе :**"
     if not flag:
         for msg in adminlog:
             ruser = await event.client.get_entity(msg.old.from_id)
             _media_type = await media_type(msg.old)
             if _media_type is None:
-                deleted_msg += f"\n☞ __{msg.old.message}__ **Sent by** {_format.mentionuser(ruser.first_name ,ruser.id)}"
+                deleted_msg += f"\n☞ __{msg.old.message}__ **Отправлено от** {_format.mentionuser(ruser.first_name ,ruser.id)}"
             else:
-                deleted_msg += f"\n☞ __{_media_type}__ **Sent by** {_format.mentionuser(ruser.first_name ,ruser.id)}"
+                deleted_msg += f"\n☞ __{_media_type}__ **Отправлено от** {_format.mentionuser(ruser.first_name ,ruser.id)}"
         await edit_or_reply(catevent, deleted_msg)
     else:
         main_msg = await edit_or_reply(catevent, deleted_msg)
@@ -684,10 +684,10 @@ async def _iundlt(event):  # sourcery no-metrics
             _media_type = await media_type(msg.old)
             if _media_type is None:
                 await main_msg.reply(
-                    f"{msg.old.message}\n**Sent by** {_format.mentionuser(ruser.first_name ,ruser.id)}"
+                    f"{msg.old.message}\n**Отправлено от** {_format.mentionuser(ruser.first_name ,ruser.id)}"
                 )
             else:
                 await main_msg.reply(
-                    f"{msg.old.message}\n**Sent by** {_format.mentionuser(ruser.first_name ,ruser.id)}",
+                    f"{msg.old.message}\n**Отправлено от** {_format.mentionuser(ruser.first_name ,ruser.id)}",
                     file=msg.old.media,
                 )
