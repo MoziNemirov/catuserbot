@@ -63,7 +63,7 @@ async def set_not_afk(event):
     ):
         shite = await event.client.send_message(
             event.chat_id,
-            "`Back alive! No Longer afk.\nWas afk for " + endtime + "`",
+            "`Вернулся живым! Больше не афк.\nБыл афк " + endtime + "`",
         )
         AFK_.USERAFK_ON = {}
         AFK_.afk_time = None
@@ -73,8 +73,8 @@ async def set_not_afk(event):
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
-                "#AFKFALSE \n`Set AFK mode to False\n"
-                + "Back alive! No Longer afk.\nWas afk for "
+                "#AFKFALSE \n`Установите для режима AFK значение False\n"
+                + "Вернуться живым! Больше не афк.\nБыл афк "
                 + endtime
                 + "`",
             )
@@ -116,23 +116,23 @@ async def on_afk(event):  # sourcery no-metrics
         if AFK_.afk_type == "media":
             if AFK_.reason:
                 message_to_reply = (
-                    f"`I am AFK .\n\nAFK Since {endtime}\nReason : {AFK_.reason}`"
+                    f"`Я в АФК .\n\nАФК С {endtime}\nПричина : {AFK_.reason}`"
                 )
             else:
-                message_to_reply = f"`I am AFK .\n\nAFK Since {endtime}\nReason : Not Mentioned ( ಠ ʖ̯ ಠ)`"
+                message_to_reply = f"`Я АФК.\n\nAFK С {endtime}\nПричина: не указана ( ಠ ʖ̯ ಠ)`"
             if event.chat_id:
                 msg = await event.reply(message_to_reply, file=AFK_.media_afk.media)
         elif AFK_.afk_type == "text":
             if AFK_.msg_link and AFK_.reason:
                 message_to_reply = (
-                    f"**I am AFK .\n\nAFK Since {endtime}\nReason : **{AFK_.reason}"
+                    f"**Я АФК .\n\nАФК с {endtime}\nПричина : **{AFK_.reason}"
                 )
             elif AFK_.reason:
                 message_to_reply = (
-                    f"`I am AFK .\n\nAFK Since {endtime}\nReason : {AFK_.reason}`"
+                    f"`Я АФК .\n\nАФК с {endtime}\nПричина : {AFK_.reason}`"
                 )
             else:
-                message_to_reply = f"`I am AFK .\n\nAFK Since {endtime}\nReason : Not Mentioned ( ಠ ʖ̯ ಠ)`"
+                message_to_reply = f"`Я АФК .\n\nАФК с {endtime}\nПричина: не указана ( ಠ ʖ̯ ಠ)`"
             if event.chat_id:
                 msg = await event.reply(message_to_reply)
         if event.chat_id in AFK_.last_afk_message:
@@ -149,14 +149,14 @@ async def on_afk(event):  # sourcery no-metrics
         except Exception as e:
             LOGS.info(str(e))
         messaget = await media_type(event)
-        resalt = f"#AFK_TAGS \n<b>Group : </b><code>{hmm.title}</code>"
+        resalt = f"#AFK_TAGS \n<b>Группа : </b><code>{hmm.title}</code>"
         if full is not None:
-            resalt += f"\n<b>From : </b> 👤{_format.htmlmentionuser(full.first_name , full.id)}"
+            resalt += f"\n<b>Из : </b> 👤{_format.htmlmentionuser(full.first_name , full.id)}"
         if messaget is not None:
-            resalt += f"\n<b>Message type : </b><code>{messaget}</code>"
+            resalt += f"\n<b>Тип сообщения : </b><code>{messaget}</code>"
         else:
-            resalt += f"\n<b>Message : </b>{event.message.message}"
-        resalt += f"\n<b>Message link: </b><a href = 'https://t.me/c/{hmm.id}/{event.message.id}'> link</a>"
+            resalt += f"\n<b>Сообщение : </b>{event.message.message}"
+        resalt += f"\n<b>Ссылка на сообщение: </b><a href = 'https://t.me/c/{hmm.id}/{event.message.id}'> link</a>"
         if not event.is_private:
             await event.client.send_message(
                 Config.PM_LOGGER_GROUP_ID,
@@ -170,20 +170,20 @@ async def on_afk(event):  # sourcery no-metrics
     pattern="afk(?:\s|$)([\s\S]*)",
     command=("afk", plugin_category),
     info={
-        "header": "Enables afk for your account",
-        "description": "When you are in afk if any one tags you then your bot will reply as he is offline.\
-        AFK mean away from keyboard.",
-        "options": "If you want AFK reason with hyperlink use [ ; ] after reason, then paste the media link.",
-        "usage": [
+        "заголовок": "Включает AFK для вашей учетной записи",
+        "описание": "Когда вы находитесь в афк, если кто-то пометит вас, ваш бот ответит, поскольку он не в сети.\
+        AFK означает «вдали от клавиатуры».",
+        "опции": "Если вам нужна причина AFK с гиперссылкой, используйте [ ; ] после причины, затем вставьте ссылку на медиа.",
+        "Применение": [
             "{tr}afk <reason>",
             "{tr}afk <reason> ; <link>",
         ],
-        "examples": "{tr}afk Let Me Sleep",
-        "note": "Switches off AFK when you type back anything, anywhere. You can use #afk in message to continue in afk without breaking it",
+        "Примеры": "{tr}afk Let Me Sleep",
+        "примечание": "Отключает AFK, когда вы печатаете что-либо в любом месте. Вы можете использовать #afk в сообщении, чтобы продолжить в afk, не нарушая его.",
     },
 )
 async def _(event):
-    "To mark yourself as afk i.e. Away from keyboard"
+    "Чтобы пометить себя как афк, т.е. вдали от клавиатуры"
     AFK_.USERAFK_ON = {}
     AFK_.afk_time = None
     AFK_.last_afk_message = {}
@@ -209,20 +209,20 @@ async def _(event):
         AFK_.USERAFK_ON = f"on: {AFK_.reason}"
         if AFK_.reason:
             await edit_delete(
-                event, f"`I shall be Going afk! because ~` {AFK_.reason}", 5
+                event, f"`Я собираюсь афк! потому что ~` {AFK_.reason}", 5
             )
         else:
-            await edit_delete(event, "`I shall be Going afk! `", 5)
+            await edit_delete(event, "`Я собираюсь афк! `", 5)
         if BOTLOG:
             if AFK_.reason:
                 await event.client.send_message(
                     BOTLOG_CHATID,
-                    f"#AFKTRUE \nSet AFK mode to True, and Reason is {AFK_.reason}",
+                    f"#AFKTRUE \nУстановите для режима AFK значение True, и Причину — {AFK_.reason}",
                 )
             else:
                 await event.client.send_message(
                     BOTLOG_CHATID,
-                    "#AFKTRUE \nSet AFK mode to True, and Reason is Not Mentioned",
+                    "#AFKTRUE \nУстановите для режима AFK значение True, а причина не упоминается",
                 )
 
 
@@ -230,28 +230,28 @@ async def _(event):
     pattern="mafk(?:\s|$)([\s\S]*)",
     command=("mafk", plugin_category),
     info={
-        "header": "Enables afk for your account",
-        "description": "When you are in afk if any one tags you then your bot will reply as he is offline.\
-         AFK mean away from keyboard. Here it supports media unlike afk command",
-        "options": "If you want AFK reason with hyperlink use [ ; ] after reason, then paste the media link.",
-        "usage": [
+        "заголовок": "Включает AFK для вашей учетной записи",
+        "описание": "Когда вы находитесь в афк, если кто-то пометит вас, ваш бот ответит, поскольку он не в сети.\
+         AFK означает «вдали от клавиатуры». Здесь он поддерживает медиа, в отличие от команды afk.",
+        "опции": "Если вам нужна причина AFK с гиперссылкой, используйте [ ; ] после причины, затем вставьте ссылку на медиа.",
+        "Применение": [
             "{tr}mafk <reason> and reply to media",
         ],
-        "examples": "{tr}mafk Let Me Sleep",
-        "note": "Switches off AFK when you type back anything, anywhere. You can use #afk in message to continue in afk without breaking it",
+        "Примеры": "{tr}mafk Let Me Sleep",
+        "примечание": "Отключает AFK, когда вы печатаете что-либо в любом месте. Вы можете использовать #afk в сообщении, чтобы продолжить в afk, не нарушая его.",
     },
 )
 async def _(event):
-    "To mark yourself as afk i.e. Away from keyboard (supports media)"
+    "Чтобы пометить себя как афк, т.е. вдали от клавиатуры (поддерживает медиа)"
     reply = await event.get_reply_message()
     media_t = await media_type(reply)
     if media_t == "Sticker" or not media_t:
         return await edit_or_reply(
-            event, "`You haven't replied to any media to activate media afk`"
+            event, "`Вы не ответили ни на одно средство массовой информации, чтобы активировать медиа-афк`"
         )
     if not BOTLOG:
         return await edit_or_reply(
-            event, "`To use media afk you need to set PRIVATE_GROUP_BOT_API_ID config`"
+            event, "`Чтобы использовать media afk, вам необходимо установить конфигурацию PRIVATE_GROUP_BOT_API_ID.`"
         )
     AFK_.USERAFK_ON = {}
     AFK_.afk_time = None
@@ -273,7 +273,7 @@ async def _(event):
         AFK_.USERAFK_ON = f"on: {AFK_.reason}"
         if AFK_.reason:
             await edit_delete(
-                event, f"`I shall be Going afk! because ~` {AFK_.reason}", 5
+                event, f"`Я собираюсь афк! потому что ~` {AFK_.reason}", 5
             )
         else:
             await edit_delete(event, "`I shall be Going afk! `", 5)
@@ -281,10 +281,10 @@ async def _(event):
         if AFK_.reason:
             await event.client.send_message(
                 BOTLOG_CHATID,
-                f"#AFKTRUE \nSet AFK mode to True, and Reason is {AFK_.reason}",
+                f"#AFKTRUE \nУстановите для режима AFK значение True, и Причину — {AFK_.reason}",
             )
         else:
             await event.client.send_message(
                 BOTLOG_CHATID,
-                "#AFKTRUE \nSet AFK mode to True, and Reason is Not Mentioned",
+                "#AFKTRUE \nУстановите для режима AFK значение True, а причина не упоминается",
             )
